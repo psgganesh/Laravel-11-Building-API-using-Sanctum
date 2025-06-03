@@ -48,4 +48,25 @@ class RegisterController extends BaseController
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
         }
     }
+
+    public function brokenAccessControl(Request $request)
+    {
+        $userId = $request->input('user_id');
+        $user = DB::table('users')->where('id', $userId)->first();
+        return response()->json($user);
+    }
+
+    public function securityMisconfiguration()
+    {
+        ob_start();
+        phpinfo();
+        $info = ob_get_clean();
+        return $info;
+    }
+
+    public function xss(Request $request)
+    {
+        $input = $request->input('q');
+        return "<html><body>Search results for: $input</body></html>";
+    }
 }
