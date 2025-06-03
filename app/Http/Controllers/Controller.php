@@ -17,62 +17,6 @@ abstract class Controller
         return response()->json($user);
     }
 
-    // 2. Broken Authentication (using hardcoded credentials)
-    public function brokenAuthentication(Request $request)
-    {
-        // Vulnerable: hardcoded credentials
-        if ($request->input('username') === 'admin' && $request->input('password') === 'password123') {
-            session(['user' => 'admin']);
-            return "Logged in as admin";
-        }
-        return "Invalid credentials";
-    }
-
-    // 3. Sensitive Data Exposure (insecurely echoing secrets)
-    public function sensitiveDataExposure()
-    {
-        // Vulnerable: printing sensitive data
-        $secret = env('APP_KEY');
-        return "Secret key: $secret";
-    }
-
-    // 4. XML External Entities (XXE) (PHP DOMDocument with external entities)
-    public function xxe(Request $request)
-    {
-        $xml = $request->input('xml');
-        $dom = new \DOMDocument();
-        // Vulnerable: loading XML with external entity expansion enabled
-        $dom->loadXML($xml, LIBXML_NOENT | LIBXML_DTDLOAD);
-        return $dom->textContent;
-    }
-
-    // 5. Broken Access Control (no auth check before accessing user data)
-    public function brokenAccessControl(Request $request)
-    {
-        $userId = $request->input('user_id');
-        // Vulnerable: no authentication or authorization check
-        $user = DB::table('users')->where('id', $userId)->first();
-        return response()->json($user);
-    }
-
-    // 6. Security Misconfiguration (debug mode enabled, exposing PHP info)
-    public function securityMisconfiguration()
-    {
-        // Vulnerable: exposing phpinfo
-        ob_start();
-        phpinfo();
-        $info = ob_get_clean();
-        return $info;
-    }
-
-    // 7. Cross-Site Scripting (XSS)
-    public function xss(Request $request)
-    {
-        $input = $request->input('q');
-        // Vulnerable: outputting unsanitized user input in HTML
-        return "<html><body>Search results for: $input</body></html>";
-    }
-
     // 8. Insecure Deserialization (unserialize user data)
     public function insecureDeserialization(Request $request)
     {
